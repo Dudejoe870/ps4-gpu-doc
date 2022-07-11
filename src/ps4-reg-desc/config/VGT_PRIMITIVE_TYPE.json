@@ -1,0 +1,4 @@
+[
+    { "name": "PRIM_TYPE", "bits": 6 },
+    { "bits": 26 }
+]

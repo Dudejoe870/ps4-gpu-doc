@@ -1,6 +1,6 @@
 # PS4-GPU-DOC
 
-**DRAFT 0.0.1**
+**DRAFT 0.0.2**
 
 ## Table of Contents
 
@@ -18,6 +18,7 @@
     - [3.2 Registers](#32-registers)
       - [3.2.1 Context Registers](#321-context-registers)
       - [3.2.2 Config Registers](#322-config-registers)
+        - [3.2.2.1 VGTPrimitiveType](#3221-vgtprimitivetype)
       - [3.2.3 Shader Registers](#323-shader-registers)
     - [3.3 Events](#33-events)
   - [4. GNM](#4-gnm)
@@ -153,7 +154,7 @@ Any not listed are unknown at this time and will be updated as more information 
 
 ### 3.2 Registers
 
-[PAL source code](https://github.com/GPUOpen-Drivers/pal/blob/dev/src/core/hw/gfxip/gfx6/chip/si_ci_vi_merged_offset.h) (There are so many we can't hope to list them all but the ones that will be listed here are the important ones that have been reverse engineered to figure out their meaning and how to use them)
+[PAL source code](https://github.com/GPUOpen-Drivers/pal/blob/dev/src/core/hw/gfxip/gfx6/chip/si_ci_vi_merged_offset.h) (There are so many we can't hope to list them all but the ones that will be listed here are the important ones that have been figured out their meaning and how to use them)
 
 #### 3.2.1 Context Registers
 
@@ -161,7 +162,34 @@ Any not listed are unknown at this time and will be updated as more information 
 
 #### 3.2.2 Config Registers
 
-**TODO**
+Config registers are present at offset `0x2000`.
+
+##### 3.2.2.1 VGTPrimitiveType
+
+<img src="svgs/config/VGT_PRIMITIVE_TYPE.svg">
+
+- PRIM_TYPE: The Primitive type to render when submitting Draw Calls
+  - POINT_LIST: `0x00`
+  - LINE_LIST: `0x01`
+  - LINE_STRIP: `0x02`
+  - TRIANGLE_LIST: `0x03`
+  - TRIANGLE_STRIP: `0x04`
+  - RECT_LIST: `0x05`
+  - QUAD_LIST: `0x06`
+  - QUAD_STRIP: `0x07`
+  - LINE_LIST_ADJ: `0x08`
+  - LINE_STRIP_ADJ: `0x09`
+  - TRIANGLE_LIST_ADJ: `0x0A`
+  - TRIANGLE_STRIP_ADJ: `0x0B`
+  - PATCH: `0x0C`
+  - TRIANGLE_FAN: `0x0D`
+  - LINE_LOOP: `0x0E`
+  - POLYGON: `0x0F`
+  - TWOD_RECT_LIST: `0x10`
+
+Register Offset: `0x256`
+
+Description: Describes the Primitive type to use when rendering geometry.
 
 #### 3.2.3 Shader Registers
 
@@ -220,3 +248,4 @@ Description: Same as `sceGnmSubmitCommandBuffers` but with an unused parameter. 
 - The NSA for open-sourcing [Ghidra](https://github.com/NationalSecurityAgency/ghidra), the reverse-engineering tool. And to all the developers who have now contributed to the project.
 - AMD for open-sourcing some of their [Radeon drivers](https://github.com/GPUOpen-Drivers/AMDVLK) which helped immensely with learning the hardware.
 - The [Mesa](https://github.com/mesa3d/mesa) developers for also writing quite nice and readable code :)
+- The Wavedrom developers for the wonderful [bitfield SVG renderer](https://github.com/wavedrom/bitfield).
