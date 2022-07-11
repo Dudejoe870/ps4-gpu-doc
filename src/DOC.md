@@ -1,6 +1,6 @@
 # PS4-GPU-DOC
 
-**DRAFT 0.1.0**
+**DRAFT 0.1.1**
 
 ## Table of Contents
 
@@ -275,3 +275,4 @@ Description: Same as `sceGnmSubmitCommandBuffers` but with an unused parameter. 
 - AMD for open-sourcing some of their [Radeon drivers](https://github.com/GPUOpen-Drivers/AMDVLK) which helped immensely with learning the hardware.
 - The [Mesa](https://github.com/mesa3d/mesa) developers for also writing quite nice and readable code :)
 - The Wavedrom developers for the wonderful [bitfield SVG renderer](https://github.com/wavedrom/bitfield).
+- [yzane](https://github.com/yzane) for the [Markdown PDF](https://github.com/yzane/vscode-markdown-pdf) Visual Studio Code extension.
