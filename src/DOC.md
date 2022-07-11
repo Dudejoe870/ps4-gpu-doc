@@ -1,6 +1,6 @@
 # PS4-GPU-DOC
 
-**DRAFT 0.0.2**
+**DRAFT 0.1.0**
 
 ## Table of Contents
 
@@ -15,17 +15,19 @@
   - [2. Orbis OS](#2-orbis-os)
   - [3. PM4](#3-pm4)
     - [3.1 Commands](#31-commands)
-    - [3.2 Registers](#32-registers)
-      - [3.2.1 Context Registers](#321-context-registers)
-      - [3.2.2 Config Registers](#322-config-registers)
-        - [3.2.2.1 VGTPrimitiveType](#3221-vgtprimitivetype)
-      - [3.2.3 Shader Registers](#323-shader-registers)
-    - [3.3 Events](#33-events)
-  - [4. GNM](#4-gnm)
-    - [4.1 API Functions](#41-api-functions)
-      - [4.1.1 sceGnmSubmitCommandBuffers](#411-scegnmsubmitcommandbuffers)
-      - [4.1.2 sceGnmSubmitCommandBuffersForWorkload](#412-scegnmsubmitcommandbuffersforworkload)
+  - [4. Registers](#4-registers)
+    - [4.1 Context Registers](#41-context-registers)
+    - [4.2 Config Registers](#42-config-registers)
+      - [4.2.1 VGTPrimitiveType](#421-vgtprimitivetype)
+    - [4.3 Shader Registers](#43-shader-registers)
+  - [5. Events](#5-events)
+  - [6. GNM](#6-gnm)
+    - [6.1 API Functions](#61-api-functions)
+      - [6.1.1 sceGnmSubmitCommandBuffers](#611-scegnmsubmitcommandbuffers)
+      - [6.1.2 sceGnmSubmitCommandBuffersForWorkload](#612-scegnmsubmitcommandbuffersforworkload)
   - [Special Thanks](#special-thanks)
+
+<div class="page"/>
 
 ## 1. Introduction
 
@@ -45,7 +47,9 @@ The PS4 pro GPU is an AMD GPU based off of the Radeon GCN 4 Polaris 10 (Ellesmer
 
 ### 1.2 Where Did You Find This Out Anyhow
 
-You may be asking yourself, how do you even reverse engineer something as *complicated* as a relatively modern GPU that has so many moving parts no single engineer that even worked on the damn thing probably knows how the entire design interconnects and works with itself. Well the answer is simple really... AMD *told* me how it works. No really. I'm not even breaching any NDAs or anything like that. AMD is actually a fairly notoriously open-source company, and so i'd like you to meet someone who will be helping significantly with this documentation...
+You may be asking yourself, how do you even reverse engineer something as *complicated* as a relatively modern GPU that has so many moving parts no single engineer that even worked on the damn thing probably knows how the entire design interconnects and works with itself. Well the answer is simple really... AMD *told* me how it works. No really. I'm not even breaching any NDAs or anything like that. AMD is actually a fairly notoriously open-source company, and so I'd like you to meet someone who will be helping significantly with this documentation...
+
+<div class="page"/>
 
 #### 1.2.1 Meet Your PAL
 
@@ -63,6 +67,8 @@ Because I don't want this document to just be about the technical information I'
 
 Nothing I'm presenting here is necessarily ground-breaking or new, anyone could've figured this stuff out pretty easily. But I am the first (I think?) to put it all in one place that is easily accessible and maintainable when new information gets discovered.
 
+<div class="page" />
+
 ## 2. Orbis OS
 
 The PS4s operating system is named Orbis, but it's actually based off FreeBSD 9.0, thus most of its functionality you can expect is very POSIX like.
@@ -72,6 +78,8 @@ The OS is split up into different libraries, \*.prx files. Well actually \*.sprx
 We won't go too in-depth into the OS in this document, basically the only library we care about is `libSceGnmDriver.sprx`<sup>1</sup> (And the libraries that support that one, but most of the calls it makes are just standard library stuff).
 
 > 1\. There are actually two versions of this library. One for the Original PS4 / Slim, and one for "Neo mode" aka the PS4 pro. The version I reverse engineered was the PS4 pro version.
+
+<div class="page"/>
 
 ## 3. PM4
 
@@ -152,19 +160,25 @@ Any not listed are unknown at this time and will be updated as more information 
 
 > 2\. Taken from [Mesa3d source code](https://github.com/mesa3d/mesa/blob/main/src/amd/common/sid.h)
 
-### 3.2 Registers
+<div class="page"/>
+
+## 4. Registers
 
 [PAL source code](https://github.com/GPUOpen-Drivers/pal/blob/dev/src/core/hw/gfxip/gfx6/chip/si_ci_vi_merged_offset.h) (There are so many we can't hope to list them all but the ones that will be listed here are the important ones that have been figured out their meaning and how to use them)
 
-#### 3.2.1 Context Registers
+<div class="page"/>
+
+### 4.1 Context Registers
 
 **TODO**
 
-#### 3.2.2 Config Registers
+<div class="page"/>
+
+### 4.2 Config Registers
 
 Config registers are present at offset `0x2000`.
 
-##### 3.2.2.1 VGTPrimitiveType
+#### 4.2.1 VGTPrimitiveType
 
 <img src="svgs/config/VGT_PRIMITIVE_TYPE.svg">
 
@@ -191,27 +205,35 @@ Register Offset: `0x256`
 
 Description: Describes the Primitive type to use when rendering geometry.
 
-#### 3.2.3 Shader Registers
+<div class="page"/>
+
+### 4.3 Shader Registers
 
 **TODO**
 
-### 3.3 Events
+<div class="page"/>
+
+## 5. Events
 
 **TODO**
 
-## 4. GNM
+<div class="page"/>
+
+## 6. GNM
 
 The GNM API is the API used by the PS4 to abstract over the lower-level device driver (which it issues commands to via the ioctl function), think of it as like OpenGL, Direct-X, or Vulkan. However unlike those APIs, GNM is a bit lower-level, actually low-level enough to give games higher-level driver-like control over the GPU.
 
 > Note: Quick note about GNMX. You may have heard about GNMX as an even higher-level API, well unfortunately there's not much we can do to get information about that API as it seems to be statically linked within games. Thus there is no information about function names or anything of the sort. But luckily that doesn't really matter as GNMX just boils down to calling GNM functions, so we can safely ignore it.
 
-### 4.1 API Functions
+### 6.1 API Functions
 
 All functions are currently untested on real hardware. All information is purely based off decompiled code from 9.0.0 firmware.
 
 > Note: All function names come from the names embedded in the ELF file. Some parameter names come from error messages embedded in the code.
 
-#### 4.1.1 sceGnmSubmitCommandBuffers
+<div class="page"/>
+
+#### 6.1.1 sceGnmSubmitCommandBuffers
 
 ```c
 int __stdcall sceGnmSubmitCommandBuffers(uint32_t length, 
@@ -231,7 +253,9 @@ Returns: `0` if successful. Otherwise it returns some other value (Error codes n
 
 Exceptions: Unknown at this time.
 
-#### 4.1.2 sceGnmSubmitCommandBuffersForWorkload
+<div class="page"/>
+
+#### 6.1.2 sceGnmSubmitCommandBuffersForWorkload
 
 ```c
 int __stdcall sceGnmSubmitCommandBuffersForWorkload(
@@ -241,6 +265,8 @@ int __stdcall sceGnmSubmitCommandBuffersForWorkload(
 ```
 
 Description: Same as `sceGnmSubmitCommandBuffers` but with an unused parameter. Perhaps was used for debugging on Devkit firmware? Complete speculation. `sceGnmSubmitCommandBuffers` actually just directly calls this function with the length parameter copied to the unused parameter.
+
+<div class="page"/>
 
 ## Special Thanks
 
