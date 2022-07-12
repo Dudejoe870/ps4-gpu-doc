@@ -1,0 +1,12 @@
+[
+    { "name": "COLOR_SRCBLEND", "bits": 5 },
+    { "name": "COLOR_C_FCN", "bits": 3 },
+    { "name": "COLOR_DESTBLEND", "bits": 5 },
+    { "bits": 3 },
+    { "name": "ALPHA_SRCBLEND", "bits": 5 },
+    { "name": "ALPHA_C_FCN", "bits": 3 },
+    { "name": "ALPHA_DESTBLEND", "bits": 5 },
+    { "name": "EN0", "bits": 1 },
+    { "name": "EN", "bits": 1 },
+    { "name": "EN1", "bits": 1 }
+]

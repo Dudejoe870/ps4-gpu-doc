@@ -1,0 +1,14 @@
+[
+    { "name": "EN0", "bits": 1 },
+    { "name": "EN1", "bits": 1 },
+    { "name": "EN2", "bits": 1 },
+    { "name": "EN3", "bits": 1 },
+    { "name": "ZFUNC", "bits": 3 },
+    { "name": "EN4", "bits": 1},
+    { "name": "SFUNC", "bits": 3 },
+    { "bits": 9 },
+    { "name": "BF_FUNC", "bits": 3 },
+    { "bits": 7 },
+    { "name": "EN5", "bits": 1 },
+    { "name": "EN6", "bits": 1 }
+]

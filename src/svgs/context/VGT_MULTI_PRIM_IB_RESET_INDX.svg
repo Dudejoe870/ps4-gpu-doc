@@ -16,7 +16,8 @@
         <line x1="976" x2="976" y1="55" y2="49"/>
         <line x1="941" x2="941" y2="6"/>
         <line x1="941" x2="941" y1="55" y2="49"/>
-        <line x1="906" x2="906" y2="55"/>
+        <line x1="906" x2="906" y2="6"/>
+        <line x1="906" x2="906" y1="55" y2="49"/>
         <line x1="871" x2="871" y2="6"/>
         <line x1="871" x2="871" y1="55" y2="49"/>
         <line x1="836" x2="836" y2="6"/>
@@ -69,27 +70,19 @@
         <line x1="35" x2="35" y1="55" y2="49"/>
       </g>
       <g>
-        <g>
-          <rect width="906" height="55" style="fill-opacity:0.1"/>
-        </g>
+        <g/>
         <g transform="translate(17,-11)">
           <g transform="translate(1080)">
             <text y="6">0</text>
-          </g>
-          <g transform="translate(906)">
-            <text y="6">5</text>
-          </g>
-          <g transform="translate(871)">
-            <text y="6">6</text>
           </g>
           <g transform="translate(0)">
             <text y="6">31</text>
           </g>
         </g>
         <g transform="translate(17,27)">
-          <g transform="translate(993)">
+          <g transform="translate(540)">
             <text y="6">
-              <tspan>PRIM_TYPE</tspan>
+              <tspan>RESET_INDX</tspan>
             </text>
           </g>
         </g>

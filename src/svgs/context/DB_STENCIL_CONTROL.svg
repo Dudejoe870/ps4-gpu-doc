@@ -12,47 +12,42 @@
         <line x1="1045" x2="1045" y1="55" y2="49"/>
         <line x1="1010" x2="1010" y2="6"/>
         <line x1="1010" x2="1010" y1="55" y2="49"/>
-        <line x1="976" x2="976" y2="6"/>
-        <line x1="976" x2="976" y1="55" y2="49"/>
+        <line x1="976" x2="976" y2="55"/>
         <line x1="941" x2="941" y2="6"/>
         <line x1="941" x2="941" y1="55" y2="49"/>
-        <line x1="906" x2="906" y2="55"/>
+        <line x1="906" x2="906" y2="6"/>
+        <line x1="906" x2="906" y1="55" y2="49"/>
         <line x1="871" x2="871" y2="6"/>
         <line x1="871" x2="871" y1="55" y2="49"/>
-        <line x1="836" x2="836" y2="6"/>
-        <line x1="836" x2="836" y1="55" y2="49"/>
+        <line x1="836" x2="836" y2="55"/>
         <line x1="801" x2="801" y2="6"/>
         <line x1="801" x2="801" y1="55" y2="49"/>
         <line x1="767" x2="767" y2="6"/>
         <line x1="767" x2="767" y1="55" y2="49"/>
         <line x1="732" x2="732" y2="6"/>
         <line x1="732" x2="732" y1="55" y2="49"/>
-        <line x1="697" x2="697" y2="6"/>
-        <line x1="697" x2="697" y1="55" y2="49"/>
+        <line x1="697" x2="697" y2="55"/>
         <line x1="662" x2="662" y2="6"/>
         <line x1="662" x2="662" y1="55" y2="49"/>
         <line x1="627" x2="627" y2="6"/>
         <line x1="627" x2="627" y1="55" y2="49"/>
         <line x1="592" x2="592" y2="6"/>
         <line x1="592" x2="592" y1="55" y2="49"/>
-        <line x1="558" x2="558" y2="6"/>
-        <line x1="558" x2="558" y1="55" y2="49"/>
+        <line x1="558" x2="558" y2="55"/>
         <line x1="523" x2="523" y2="6"/>
         <line x1="523" x2="523" y1="55" y2="49"/>
         <line x1="488" x2="488" y2="6"/>
         <line x1="488" x2="488" y1="55" y2="49"/>
         <line x1="453" x2="453" y2="6"/>
         <line x1="453" x2="453" y1="55" y2="49"/>
-        <line x1="418" x2="418" y2="6"/>
-        <line x1="418" x2="418" y1="55" y2="49"/>
+        <line x1="418" x2="418" y2="55"/>
         <line x1="383" x2="383" y2="6"/>
         <line x1="383" x2="383" y1="55" y2="49"/>
         <line x1="348" x2="348" y2="6"/>
         <line x1="348" x2="348" y1="55" y2="49"/>
         <line x1="314" x2="314" y2="6"/>
         <line x1="314" x2="314" y1="55" y2="49"/>
-        <line x1="279" x2="279" y2="6"/>
-        <line x1="279" x2="279" y1="55" y2="49"/>
+        <line x1="279" x2="279" y2="55"/>
         <line x1="244" x2="244" y2="6"/>
         <line x1="244" x2="244" y1="55" y2="49"/>
         <line x1="209" x2="209" y2="6"/>
@@ -70,26 +65,81 @@
       </g>
       <g>
         <g>
-          <rect width="906" height="55" style="fill-opacity:0.1"/>
+          <rect width="279" height="55" style="fill-opacity:0.1"/>
         </g>
         <g transform="translate(17,-11)">
           <g transform="translate(1080)">
             <text y="6">0</text>
           </g>
-          <g transform="translate(906)">
-            <text y="6">5</text>
+          <g transform="translate(976)">
+            <text y="6">3</text>
           </g>
-          <g transform="translate(871)">
-            <text y="6">6</text>
+          <g transform="translate(941)">
+            <text y="6">4</text>
+          </g>
+          <g transform="translate(836)">
+            <text y="6">7</text>
+          </g>
+          <g transform="translate(801)">
+            <text y="6">8</text>
+          </g>
+          <g transform="translate(697)">
+            <text y="6">11</text>
+          </g>
+          <g transform="translate(662)">
+            <text y="6">12</text>
+          </g>
+          <g transform="translate(558)">
+            <text y="6">15</text>
+          </g>
+          <g transform="translate(523)">
+            <text y="6">16</text>
+          </g>
+          <g transform="translate(418)">
+            <text y="6">19</text>
+          </g>
+          <g transform="translate(383)">
+            <text y="6">20</text>
+          </g>
+          <g transform="translate(279)">
+            <text y="6">23</text>
+          </g>
+          <g transform="translate(244)">
+            <text y="6">24</text>
           </g>
           <g transform="translate(0)">
             <text y="6">31</text>
           </g>
         </g>
         <g transform="translate(17,27)">
-          <g transform="translate(993)">
+          <g transform="translate(1028)">
             <text y="6">
-              <tspan>PRIM_TYPE</tspan>
+              <tspan>S_FAIL</tspan>
+            </text>
+          </g>
+          <g transform="translate(889)">
+            <text y="6">
+              <tspan>S_ZPASS</tspan>
+            </text>
+          </g>
+          <g transform="translate(749)">
+            <text y="6">
+              <tspan>S_ZFAIL</tspan>
+            </text>
+          </g>
+          <g transform="translate(610)">
+            <text y="6">
+              <tspan>S_FAIL_BF</tspan>
+            </text>
+          </g>
+          <g transform="translate(470)">
+            <text y="6">
+              <tspan>S_ZPASS_BF</tspan>
+            </text>
+          </g>
+          <g transform="translate(331)">
+            <text y="6">
+              <tspan>S_ZFAIL_BF</tspan>
             </text>
           </g>
         </g>

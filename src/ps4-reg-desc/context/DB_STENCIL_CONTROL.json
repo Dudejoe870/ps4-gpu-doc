@@ -1,0 +1,9 @@
+[
+    { "name": "S_FAIL", "bits": 4 },
+    { "name": "S_ZPASS", "bits": 4 },
+    { "name": "S_ZFAIL", "bits": 4 },
+    { "name": "S_FAIL_BF", "bits": 4 },
+    { "name": "S_ZPASS_BF", "bits": 4 },
+    { "name": "S_ZFAIL_BF", "bits": 4 },
+    { "bits": 8 }
+]

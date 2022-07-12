@@ -1,6 +1,8 @@
 # PS4-GPU-DOC
 
-**DRAFT 0.1.1**
+**DRAFT 0.2.0**
+
+**--INFORMATION MAY BE INACCURATE, IF IT APPEARS TO BE PLEASE OPEN AN ISSUE [HERE](https://github.com/Dudejoe870/ps4-gpu-doc/issues)--**
 
 ## Table of Contents
 
@@ -17,9 +19,14 @@
     - [3.1 Commands](#31-commands)
   - [4. Registers](#4-registers)
     - [4.1 Context Registers](#41-context-registers)
+      - [4.1.1 VGTMultiPrimIbResetEn](#411-vgtmultiprimibreseten)
+      - [4.1.2 VGTMultiPrimIbResetIndx](#412-vgtmultiprimibresetindx)
+      - [4.1.3 DBDepthControl](#413-dbdepthcontrol)
+      - [4.1.4 DBStencilControl](#414-dbstencilcontrol)
+      - [4.1.5 CBBlend(0-7)Control](#415-cbblend0-7control)
     - [4.2 Config Registers](#42-config-registers)
       - [4.2.1 VGTPrimitiveType](#421-vgtprimitivetype)
-    - [4.3 Shader Registers](#43-shader-registers)
+    - [4.3 Shader Persistent Registers](#43-shader-persistent-registers)
   - [5. Events](#5-events)
   - [6. GNM](#6-gnm)
     - [6.1 API Functions](#61-api-functions)
@@ -164,13 +171,173 @@ Any not listed are unknown at this time and will be updated as more information 
 
 ## 4. Registers
 
-[PAL source code](https://github.com/GPUOpen-Drivers/pal/blob/dev/src/core/hw/gfxip/gfx6/chip/si_ci_vi_merged_offset.h) (There are so many we can't hope to list them all but the ones that will be listed here are the important ones that have been figured out their meaning and how to use them)
+ There are so many we can't hope to list them all but the ones that are listed here are the important ones that have been figured out their meaning and how to use them. For the full list look [here](https://github.com/GPUOpen-Drivers/pal/blob/dev/src/core/hw/gfxip/gfx6/chip/si_ci_vi_merged_offset.h).
 
 <div class="page"/>
 
 ### 4.1 Context Registers
 
-**TODO**
+Context registers are present at offset `0xA000`.
+
+#### 4.1.1 VGTMultiPrimIbResetEn
+
+<img src="svgs/context/VGT_MULTI_PRIM_IB_RESET_EN.svg">
+
+- RESET_EN (EN): If set to one, this bit enables Primitive restarting.
+
+Register Offset: `0x2A5`
+
+Description: Enables Primitive restarting. See [here](https://www.khronos.org/opengl/wiki/Vertex_Rendering#Common) if you want to know what that is.
+
+<div class="page"/>
+
+#### 4.1.2 VGTMultiPrimIbResetIndx
+
+<img src="svgs/context/VGT_MULTI_PRIM_IB_RESET_INDX.svg">
+
+- RESET_INDX: The Primitive restart index.
+
+Register Offset: `0x103`
+
+Description: Defines the index that, when placed in the meshes indices, restarts drawing the mesh at that point in the indices. See [here](https://www.khronos.org/opengl/wiki/Vertex_Rendering#Common) for information on Primitive restarting.
+
+<div class="page"/>
+
+#### 4.1.3 DBDepthControl
+
+<img src="svgs/context/DB_DEPTH_CONTROL.svg">
+
+- STENCIL_ENABLE (EN0): Enables Stencil testing.
+- Z_ENABLE (EN1): Enables Z-Buffering.
+- Z_WRITE_ENABLE (EN2): Enables writing to the Z-Buffer.
+- DEPTH_BOUNDS_ENABLE (EN3): Enables Depth Bounds (A minimum and maximum depth value).
+- ZFUNC: The Depth Compare function to use.
+  - NEVER: `0x00`
+  - LESS: `0x01`
+  - EQUAL: `0x02`
+  - LEQUAL: `0x03`
+  - GREATER: `0x04`
+  - NOT_EQUAL: `0x05`
+  - GEQUAL: `0x06`
+  - ALWAYS: `0x07`
+- BACKFACE_ENABLE (EN4): Not exactly sure 100%, but perhaps it enables Stencil testing on backfaces? Regardless, apparently this is supposed to be always on.<sup>1</sup>
+- STENCILFUNC (SFUNC): The Stencil compare function to use on the Stencil reference value.
+  - NEVER: `0x00`
+  - LESS: `0x01`
+  - EQUAL: `0x02`
+  - LEQUAL: `0x03`
+  - GREATER: `0x04`
+  - NOT_EQUAL: `0x05`
+  - GEQUAL: `0x06`
+  - ALWAYS: `0x07`
+- STENCILFUNC_BF: The Stencil compare function to use on the Stencil reference value for backfaces.
+  - NEVER: `0x00`
+  - LESS: `0x01`
+  - EQUAL: `0x02`
+  - LEQUAL: `0x03`
+  - GREATER: `0x04`
+  - NOT_EQUAL: `0x05`
+  - GEQUAL: `0x06`
+  - ALWAYS: `0x07`
+- ENABLE_COLOR_WRITES_ON_DEPTH_FAIL (EN5): Unknown what this is for<sup>1</sup>, always set to `0` in PAL.
+- DISABLE_COLOR_WRITES_ON_DEPTH_PASS (EN6): Unknown what this is for<sup>1</sup>, always set to `0` in PAL.
+
+Register Offset: `0x200`
+
+Description: Controls all sorts of functionality relating to the Depth buffer and Stencil buffer.
+
+> 1\. According to [PAL source code](https://github.com/GPUOpen-Drivers/pal/blob/dev/src/core/hw/gfxip/gfx6/gfx6DepthStencilState.cpp) (Look for `void DepthStencilState::Init`)
+
+<div class="page"/>
+
+#### 4.1.4 DBStencilControl
+
+<img src="svgs/context/DB_STENCIL_CONTROL.svg">
+
+- Stencil Operation Values:
+  - KEEP: `0x00`
+  - ZERO: `0x01`
+  - REPLACE_TEST: `0x02`
+  - ADD_CLAMP: `0x03`
+  - SUB_CLAMP: `0x04`
+  - INVERT: `0x05`
+  - ADD_WRAP: `0x06`
+  - SUB_WRAP: `0x07`
+
+- STENCILFAIL (S_FAIL): Stencil operation to use in the Stencil fail case.
+  - See Stencil Operation Values.
+- STENCILZPASS (S_ZPASS): Stencil operation to use in the Z-buffer pass case.
+  - See Stencil Operation Values.
+- STENCILZFAIL (S_ZFAIL): Stencil operation to use in the Z-buffer fail case.
+  - See Stencil Operation Values.
+- STENCILFAIL_BF (S_FAIL_BF): Stencil operation to use in the Stencil fail case on backfaces.
+  - See Stencil Operation Values.
+- STENCILZPASS_BF (S_ZPASS_BF): Stencil operation to use in the Z-buffer pass case on backfaces.
+  - See Stencil Operation Values.
+- STENCILZFAIL_BF (S_ZFAIL_BF): Stencil operation to use in the Z-buffer fail case on backfaces.
+  - See Stencil Operation Values.
+
+Register Offset: `0x10B`
+
+Description: Controls all of the Stencil operations to use in various cases.
+
+<div class="page"/>
+
+#### 4.1.5 CBBlend(0-7)Control
+
+<img src="svgs/context/CB_BLEND0_7_CONTROL.svg">
+
+- Blend Operation Values:
+  - ZERO: `0x00`
+  - ONE: `0x01`
+  - SRC_COLOR: `0x02`
+  - ONE_MINUS_SRC_COLOR: `0x03`
+  - DST_COLOR: `0x04`
+  - ONE_MINUS_DST_COLOR: `0x05`
+  - SRC_ALPHA: `0x06`
+  - ONE_MINUS_SRC_ALPHA: `0x07`
+  - DST_ALPHA: `0x08`
+  - ONE_MINUS_DST_ALPHA: `0x09`
+  - CONSTANT_COLOR: `0x0A`
+  - ONE_MINUS_CONSTANT_COLOR: `0x0B`
+  - CONSTANT_ALPHA: `0x0C`
+  - ONE_MINUS_CONSTANT_ALPHA: `0x0D`
+  - SRC_ALPHA_SATURATE: `0x0E`
+  - SRC1_COLOR: `0x0F` (For Dual-source Blending)
+  - ONE_MINUS_SRC1_COLOR: `0x10` (For Dual-source Blending)
+  - SRC1_ALPHA: `0x11` (For Dual-source Blending)
+  - ONE_MINUS_SRC1_ALPHA: `0x12` (For Dual-source Blending)
+
+- Blend Function Values:
+  - DST_PLUS_SRC: `0x00`
+  - SRC_MINUS_DST: `0x01`
+  - DST_MINUS_SRC: `0x02`
+  - MIN_DST_SRC: `0x03`
+  - MAX_DST_SRC: `0x04`
+
+- COLOR_SRCBLEND: Color source Blend Operation.
+  - See Blend Operation Values.
+- COLOR_COMB_FCN (COLOR_C_FCN): Color Blend Function.
+  - See Blend Function Values.
+- COLOR_DESTBLEND: Color destination Blend Operation.
+  - See Blend Operation Values.
+- ALPHA_SRCBLEND: Alpha source Blend Operation.
+  - See Blend Operation Values.
+- ALPHA_COMB_FCN (ALPHA_C_FCN): Alpha Blend Function.
+  - See Blend Function Values.
+- ALPHA_DESTBLEND: Alpha destination Blend Operation.
+  - See Blend Operation Values.
+- SEPARATE_ALPHA_BLEND (EN0): Enables whether or not to separate Blending operations between Color and Alpha.<sup>1</sup>
+- ENABLE (EN): Enables Blending for this Render Target.<sup>1</sup>
+- DISABLE_ROP3 (EN1): Unknown at this time.
+
+Register Offsets: `0x1E0`-`0x1E7`
+
+Description: Sets the Blending operations and functions for all 8 Render Targets. Supports [Dual-source Blending](https://www.khronos.org/opengl/wiki/Blending#Dual_Source_Blending). Dual-source Blending only works on Targets 0 with the second source being Target 1.<sup>2</sup>
+
+> 1\. This is an educated guess.
+
+> 2\. See [here](https://github.com/GPUOpen-Drivers/pal/blob/dev/src/core/hw/gfxip/gfxDevice.cpp) `bool GfxDevice::CanEnableDualSourceBlend` to find out more about the requirements for Dual-source blending.
 
 <div class="page"/>
 
@@ -207,7 +374,7 @@ Description: Describes the Primitive type to use when rendering geometry.
 
 <div class="page"/>
 
-### 4.3 Shader Registers
+### 4.3 Shader Persistent Registers
 
 **TODO**
 
@@ -225,13 +392,13 @@ The GNM API is the API used by the PS4 to abstract over the lower-level device d
 
 > Note: Quick note about GNMX. You may have heard about GNMX as an even higher-level API, well unfortunately there's not much we can do to get information about that API as it seems to be statically linked within games. Thus there is no information about function names or anything of the sort. But luckily that doesn't really matter as GNMX just boils down to calling GNM functions, so we can safely ignore it.
 
+<div class="page"/>
+
 ### 6.1 API Functions
 
 All functions are currently untested on real hardware. All information is purely based off decompiled code from 9.0.0 firmware.
 
 > Note: All function names come from the names embedded in the ELF file. Some parameter names come from error messages embedded in the code.
-
-<div class="page"/>
 
 #### 6.1.1 sceGnmSubmitCommandBuffers
 
