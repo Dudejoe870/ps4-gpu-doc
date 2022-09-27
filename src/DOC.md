@@ -1,6 +1,6 @@
 # PS4-GPU-DOC
 
-**DRAFT 0.2.0**
+**DRAFT 0.2.1**
 
 **--INFORMATION MAY BE INACCURATE, IF IT APPEARS TO BE PLEASE OPEN AN ISSUE [HERE](https://github.com/Dudejoe870/ps4-gpu-doc/issues)--**
 
@@ -17,6 +17,8 @@
   - [2. Orbis OS](#2-orbis-os)
   - [3. PM4](#3-pm4)
     - [3.1 Commands](#31-commands)
+    - [3.2 GNM NOP Packets](#32-gnm-nop-packets)
+      - [3.2.1 Prepare Flip Packet](#321-prepare-flip-packet)
   - [4. Registers](#4-registers)
     - [4.1 Context Registers](#41-context-registers)
       - [4.1.1 VGTMultiPrimIbResetEn](#411-vgtmultiprimibreseten)
@@ -32,6 +34,9 @@
     - [6.1 API Functions](#61-api-functions)
       - [6.1.1 sceGnmSubmitCommandBuffers](#611-scegnmsubmitcommandbuffers)
       - [6.1.2 sceGnmSubmitCommandBuffersForWorkload](#612-scegnmsubmitcommandbuffersforworkload)
+      - [6.1.3 sceGnmSubmitCommandBuffersAndFlip](#613-scegnmsubmitcommandbuffersandflip)
+      - [6.1.4 sceGnmSubmitCommandBuffersAndFlipForWorkload](#614-scegnmsubmitcommandbuffersandflipforworkload)
+      - [6.1.5 sceGnmSubmitDone](#615-scegnmsubmitdone)
   - [Special Thanks](#special-thanks)
 
 <div class="page"/>
@@ -94,7 +99,7 @@ PM4 is the format that the PS4 uses for its Command Buffers. The format consists
 
 ### 3.1 Commands
 
-This actually won't be a long section as all the documentation you need is right [here](https://developer.amd.com/wordpress/media/2013/10/si_programming_guide_v2.pdf)<sup>1</sup>, it'd also be advisable to look at the [XGL](https://github.com/GPUOpen-Drivers/xgl) source code to see what the commands are used for. However one thing that the PM4 document doesn't tell you is all the opcodes for the commands listed in it (for some reason). So here they are. (Taken from public sources)
+All the documentation you need is right [here](https://developer.amd.com/wordpress/media/2013/10/si_programming_guide_v2.pdf)<sup>1</sup>, it'd also be advisable to look at the [XGL](https://github.com/GPUOpen-Drivers/xgl) source code to see what the commands are used for. However one thing that the PM4 document doesn't tell you is all the opcodes for the commands listed in it (for some reason). So here they are. (Taken from public sources)
 
 | Name                        | Opcode |
 |-----------------------------|--------|
@@ -166,6 +171,25 @@ Any not listed are unknown at this time and will be updated as more information 
 > Note: Unless otherwise specified values are from PAL [si_ci_vi_merged_pm4_it_opcodes.h](https://github.com/GPUOpen-Drivers/pal/blob/dev/src/core/hw/gfxip/gfx6/chip/si_ci_vi_merged_pm4_it_opcodes.h)
 
 > 2\. Taken from [Mesa3d source code](https://github.com/mesa3d/mesa/blob/main/src/amd/common/sid.h)
+
+<div class="page"/>
+
+### 3.2 GNM NOP Packets
+
+There are some NOP commands that actually have other data embedded in them for the GNM driver to read.
+
+#### 3.2.1 Prepare Flip Packet
+
+When flipping the Render Target, the GNM driver checks for a NOP packet with a `COUNT` of `0x3E` (`63` DWORDS) (`0xC03E1000`). This indicates a Prepare Flip packet. The next 32-bits contains one of a few options:
+
+- `0x68750777`: PREPARE_FLIP_VOID
+- `0x68750778`: PREPARE_FLIP_LABEL
+- `0x68750780`: FLIP_WITH_EOP_INTERRUPT_VOID
+- `0x68750781`: FLIP_WITH_EOP_INTERRUPT_LABEL
+
+**TODO: Document what these do**
+
+> Note: This is pretty much undocumented and the decompiled code is pretty opaque, so some of this comes from the [GPCS4 Source Code](https://github.com/Inori/GPCS4/tree/master/GPCS4/Graphics/Gnm).
 
 <div class="page"/>
 
@@ -328,7 +352,7 @@ Description: Controls all of the Stencil operations to use in various cases.
 - ALPHA_DESTBLEND: Alpha destination Blend Operation.
   - See Blend Operation Values.
 - SEPARATE_ALPHA_BLEND (EN0): Enables whether or not to separate Blending operations between Color and Alpha.<sup>1</sup>
-- ENABLE (EN): Enables Blending for this Render Target.<sup>1</sup>
+- ENABLE (EN): Enables Blending for this Render Target.
 - DISABLE_ROP3 (EN1): Unknown at this time.
 
 Register Offsets: `0x1E0`-`0x1E7`
@@ -396,9 +420,9 @@ The GNM API is the API used by the PS4 to abstract over the lower-level device d
 
 ### 6.1 API Functions
 
-All functions are currently untested on real hardware. All information is purely based off decompiled code from 9.0.0 firmware.
+All functions are currently untested on real hardware. All information is purely based off decompiled code from 9.0.0 firmware,
 
-> Note: All function names come from the names embedded in the ELF file. Some parameter names come from error messages embedded in the code.
+> Note: All function names come from [here](https://raw.githubusercontent.com/jogolden/GhidraPS4Loader/master/data/ps4database.xml). Some parameter names come from error messages embedded in the code.
 
 #### 6.1.1 sceGnmSubmitCommandBuffers
 
@@ -432,6 +456,69 @@ int __stdcall sceGnmSubmitCommandBuffersForWorkload(
 ```
 
 Description: Same as `sceGnmSubmitCommandBuffers` but with an unused parameter. Perhaps was used for debugging on Devkit firmware? Complete speculation. `sceGnmSubmitCommandBuffers` actually just directly calls this function with the length parameter copied to the unused parameter.
+
+<div class="page"/>
+
+#### 6.1.3 sceGnmSubmitCommandBuffersAndFlip
+
+```c
+int __stdcall sceGnmSubmitAndFlipCommandBuffers(uint32_t length, 
+    void* dcbGpuAddrs[], uint32_t dcbSizesInBytes[], 
+    void* ccbGpuAddrs[], uint32_t ccbSizesInBytes[], 
+    uint32_t videoOutHandle, uint32_t renderTarget, 
+    uint32_t flipMode, uint32_t flipArg)
+```
+
+- length: The amount of Command Buffers (for both the DE and CE) to submit.
+- dcbGpuAddrs: A list of pointers to the addresses of the Command Buffers to submit to the DE. (Cannot be null)
+- dcbSizesInBytes: A list of sizes of each Command Buffer to submit to the DE. (Cannot be null)
+- ccbGpuAddrs: A list of pointers to the addresses of the Command Buffers to submit to the CE. (Can be null)
+- ccbSizesInBytes: A list of sizes of each Command Buffer to submit to the CE. (Can be null if ccbGpuAddrs is also null)
+- videoOutHandle: Unknown at this time.
+- renderTarget: The Render Target to flip to.
+- flipMode: Unknown at this time.
+- flipArg: Unknown at this time.
+
+Description: Submits `length` amount of Command Buffers to the DE (Draw Engine), and optionally the CE (Constant Engine), and flips the current renderTarget to `renderTarget`.
+
+Returns: `0` if successful. Otherwise it returns some other value (Error codes not documented yet)
+
+Exceptions: Unknown at this time.
+
+> Note: Some of this comes from the [GPCS4 source code](https://github.com/Inori/GPCS4/blob/master/GPCS4/Graphics/Sce/SceGnmDriver.cpp).
+
+<div class="page"/>
+
+#### 6.1.4 sceGnmSubmitCommandBuffersAndFlipForWorkload
+
+```c
+int __stdcall sceGnmSubmitAndFlipCommandBuffersForWorkload(
+    uint32_t unused, uint32_t length, 
+    void* dcbGpuAddrs[], uint32_t dcbSizesInBytes[], 
+    void* ccbGpuAddrs[], uint32_t ccbSizesInBytes[], 
+    uint32_t videoOutHandle, uint32_t renderTarget, 
+    uint32_t flipMode, uint32_t flipArg)
+```
+
+Description: Same as `sceGnmSubmitAndFlipCommandBuffers` but with an unused parameter.
+
+> Note: Some of this comes from the [GPCS4 source code](https://github.com/Inori/GPCS4/blob/master/GPCS4/Graphics/Sce/SceGnmDriver.cpp).
+
+<div class="page"/>
+
+#### 6.1.5 sceGnmSubmitDone
+
+```c
+int sceGnmSubmitDone(void)
+```
+
+Description: Tells the OS that all Graphics and Compute tasks are done for a frame and can process some other things.
+
+Returns: `0` if successful. Otherwise it returns some other value (Error codes not documented yet)
+
+Exceptions: Unknown at this time.
+
+> Note: Some of this comes from the [GPCS4 source code](https://github.com/Inori/GPCS4/blob/master/GPCS4/Graphics/Sce/SceGnmDriver.cpp).
 
 <div class="page"/>
 
